@@ -942,13 +942,15 @@
       };
 
       try {
-        // Send to Google Sheets via Apps Script
-        // no-cors required — response cannot be read but data posts correctly
+        // Build URL-encoded form data — required for no-cors mode
+        // (no-cors blocks custom headers like Content-Type: application/json)
+        const params = new URLSearchParams();
+        Object.entries(data).forEach(([k, v]) => params.append(k, v));
+
         await fetch(SCRIPT_URL, {
-          method:  'POST',
-          mode:    'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify(data)
+          method: 'POST',
+          mode:   'no-cors',
+          body:   params
         });
 
         // Reset form and show success
