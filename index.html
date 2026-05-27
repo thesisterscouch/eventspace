@@ -410,8 +410,10 @@
     input:focus, select:focus, textarea:focus {
       border-color: var(--terra);
       background: var(--white);
+      outline: 2px solid var(--terra);
+      outline-offset: 1px;
     }
-    input::placeholder, textarea::placeholder { color: var(--taupe); }
+    input::placeholder, textarea::placeholder { color: var(--mid); }
     select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23B8A898' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.9rem center; padding-right: 2.2rem; }
     textarea { resize: vertical; min-height: 90px; }
 
@@ -473,6 +475,35 @@
       transition: background 0.2s, transform 0.2s;
     }
     button[type="submit"]:hover { background: var(--terra-deep); transform: translateY(-1px); }
+    button[type="submit"]:focus-visible {
+      outline: 2px solid var(--white);
+      outline-offset: 3px;
+    }
+    .nav-cta:focus-visible {
+      outline: 2px solid var(--white);
+      outline-offset: 3px;
+    }
+    a:focus-visible {
+      outline: 2px solid var(--terra);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+
+    /* ── SKIP NAV ── */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 1rem;
+      background: var(--plum);
+      color: var(--white);
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      border-radius: 0 0 4px 4px;
+      z-index: 9999;
+      text-decoration: none;
+    }
+    .skip-link:focus { top: 0; }
 
     /* ── FOOTER ── */
     footer {
@@ -532,6 +563,7 @@
   </style>
 </head>
 <body>
+  <a href="#inquire" class="skip-link">Skip to main content</a>
 
   <!-- NAV -->
   <nav id="nav">
@@ -652,32 +684,32 @@
 
       <div class="form-wrap reveal" style="transition-delay:0.1s;">
         <div class="form-inner">
-          <form name="tsc-event-inquiry" netlify>
+          <form id="inquiry-form" novalidate>
 
             <div class="form-grid">
 
               <!-- 1. Full name -->
               <div class="form-group">
                 <label for="name">Full Name <span>*</span></label>
-                <input type="text" id="name" name="name" placeholder="Your full name" required />
+                <input type="text" id="name" name="name" placeholder="Your full name" required autocomplete="name" />
               </div>
 
               <!-- 2. Organization -->
               <div class="form-group">
                 <label for="org">Organization <span style="color:var(--taupe);font-weight:300;">(if applicable)</span></label>
-                <input type="text" id="org" name="org" placeholder="Business or org name" />
+                <input type="text" id="org" name="org" placeholder="Business or org name" autocomplete="organization" />
               </div>
 
               <!-- 3. Email -->
               <div class="form-group">
                 <label for="email">Email Address <span>*</span></label>
-                <input type="email" id="email" name="email" placeholder="your@email.com" required />
+                <input type="email" id="email" name="email" placeholder="your@email.com" required autocomplete="email" />
               </div>
 
               <!-- 4. Phone -->
               <div class="form-group">
                 <label for="phone">Phone Number <span>*</span></label>
-                <input type="tel" id="phone" name="phone" placeholder="(313) 000-0000" required />
+                <input type="tel" id="phone" name="phone" placeholder="(313) 000-0000" required autocomplete="tel" />
               </div>
 
               <!-- 5. Event name -->
@@ -712,7 +744,6 @@
                   <option>1 – 15</option>
                   <option>16 – 30</option>
                   <option>31 – 50</option>
-                  <option>41 – 50</option>
                 </select>
               </div>
 
@@ -763,7 +794,19 @@
 
             <div class="form-submit">
               <span class="submit-note">Available for rental following our July 2026 grand opening.</span>
-              <button type="submit">Submit Inquiry</button>
+              <button type="submit" id="submit-btn">Submit Inquiry</button>
+            </div>
+
+            <!-- Success message (hidden until submission) -->
+            <div id="form-success" role="alert" aria-live="polite" style="display:none; margin-top:1.5rem; padding:1.25rem 1.5rem; background:#EDF2ED; border-left:3px solid #2D4A2D; border-radius:3px;">
+              <p style="font-size:0.88rem; font-weight:500; color:#2D4A2D; margin-bottom:0.35rem;">Inquiry received — thank you!</p>
+              <p style="font-size:0.82rem; font-weight:300; color:#5A5A5A; line-height:1.6;">Our team will review your request and follow up within 3 to 5 business days.</p>
+            </div>
+
+            <!-- Error message (hidden until submission error) -->
+            <div id="form-error" role="alert" aria-live="polite" style="display:none; margin-top:1.5rem; padding:1.25rem 1.5rem; background:#FEF0EE; border-left:3px solid #C2847A; border-radius:3px;">
+              <p style="font-size:0.88rem; font-weight:500; color:#A8695F; margin-bottom:0.35rem;">Something went wrong.</p>
+              <p style="font-size:0.82rem; font-weight:300; color:#5A5A5A; line-height:1.6;">Please try again or email us at <a href="mailto:thesisterscouch@gmail.com" style="color:#2D4A2D; font-weight:500;">thesisterscouch@gmail.com</a>.</p>
             </div>
 
           </form>
@@ -777,7 +820,7 @@
   <div class="gallery" aria-label="Space photography">
     <div class="gallery-cell">
       <div class="photo-bg p1">
-        <svg class="photo-icon" width="36" height="36" viewBox="0 0 48 48" fill="none">
+        <svg aria-hidden="true" class="photo-icon" width="36" height="36" viewBox="0 0 48 48" fill="none">
           <rect x="4" y="10" width="40" height="30" rx="2" stroke="white" stroke-width="1.5"/>
           <circle cx="16" cy="21" r="4" stroke="white" stroke-width="1.5"/>
           <path d="M4 33l10-9 8 7 8-11 14 11" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
@@ -785,12 +828,12 @@
         <span class="photo-label">The Gathering Space</span>
       </div>
     </div>
-    <div class="gallery-cell"><div class="photo-bg p2"><svg class="photo-icon" width="28" height="28" viewBox="0 0 48 48" fill="none"><rect x="4" y="10" width="40" height="30" rx="2" stroke="white" stroke-width="1.5"/><circle cx="16" cy="21" r="4" stroke="white" stroke-width="1.5"/><path d="M4 33l10-9 8 7 8-11 14 11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg><span class="photo-label">Lounge Setup</span></div></div>
-    <div class="gallery-cell"><div class="photo-bg p3"><svg class="photo-icon" width="28" height="28" viewBox="0 0 48 48" fill="none"><rect x="4" y="10" width="40" height="30" rx="2" stroke="white" stroke-width="1.5"/><circle cx="16" cy="21" r="4" stroke="white" stroke-width="1.5"/><path d="M4 33l10-9 8 7 8-11 14 11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg><span class="photo-label">Circle Configuration</span></div></div>
-    <div class="gallery-cell"><div class="photo-bg p4"><svg class="photo-icon" width="28" height="28" viewBox="0 0 48 48" fill="none"><rect x="4" y="10" width="40" height="30" rx="2" stroke="white" stroke-width="1.5"/><circle cx="16" cy="21" r="4" stroke="white" stroke-width="1.5"/><path d="M4 33l10-9 8 7 8-11 14 11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg><span class="photo-label">Workshop Style</span></div></div>
-    <div class="gallery-cell"><div class="photo-bg p5"><svg class="photo-icon" width="28" height="28" viewBox="0 0 48 48" fill="none"><rect x="4" y="10" width="40" height="30" rx="2" stroke="white" stroke-width="1.5"/><circle cx="16" cy="21" r="4" stroke="white" stroke-width="1.5"/><path d="M4 33l10-9 8 7 8-11 14 11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg><span class="photo-label">Entry</span></div></div>
-    <div class="gallery-cell"><div class="photo-bg p6"><svg class="photo-icon" width="28" height="28" viewBox="0 0 48 48" fill="none"><rect x="4" y="10" width="40" height="30" rx="2" stroke="white" stroke-width="1.5"/><circle cx="16" cy="21" r="4" stroke="white" stroke-width="1.5"/><path d="M4 33l10-9 8 7 8-11 14 11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg><span class="photo-label">Detail</span></div></div>
-    <div class="gallery-cell"><div class="photo-bg p7"><svg class="photo-icon" width="28" height="28" viewBox="0 0 48 48" fill="none"><rect x="4" y="10" width="40" height="30" rx="2" stroke="white" stroke-width="1.5"/><circle cx="16" cy="21" r="4" stroke="white" stroke-width="1.5"/><path d="M4 33l10-9 8 7 8-11 14 11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg><span class="photo-label">Community</span></div></div>
+    <div class="gallery-cell"><div class="photo-bg p2"><svg aria-hidden="true" class="photo-icon" width="28" height="28" viewBox="0 0 48 48" fill="none"><rect x="4" y="10" width="40" height="30" rx="2" stroke="white" stroke-width="1.5"/><circle cx="16" cy="21" r="4" stroke="white" stroke-width="1.5"/><path d="M4 33l10-9 8 7 8-11 14 11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg><span class="photo-label">Lounge Setup</span></div></div>
+    <div class="gallery-cell"><div class="photo-bg p3"><svg aria-hidden="true" class="photo-icon" width="28" height="28" viewBox="0 0 48 48" fill="none"><rect x="4" y="10" width="40" height="30" rx="2" stroke="white" stroke-width="1.5"/><circle cx="16" cy="21" r="4" stroke="white" stroke-width="1.5"/><path d="M4 33l10-9 8 7 8-11 14 11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg><span class="photo-label">Circle Configuration</span></div></div>
+    <div class="gallery-cell"><div class="photo-bg p4"><svg aria-hidden="true" class="photo-icon" width="28" height="28" viewBox="0 0 48 48" fill="none"><rect x="4" y="10" width="40" height="30" rx="2" stroke="white" stroke-width="1.5"/><circle cx="16" cy="21" r="4" stroke="white" stroke-width="1.5"/><path d="M4 33l10-9 8 7 8-11 14 11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg><span class="photo-label">Workshop Style</span></div></div>
+    <div class="gallery-cell"><div class="photo-bg p5"><svg aria-hidden="true" class="photo-icon" width="28" height="28" viewBox="0 0 48 48" fill="none"><rect x="4" y="10" width="40" height="30" rx="2" stroke="white" stroke-width="1.5"/><circle cx="16" cy="21" r="4" stroke="white" stroke-width="1.5"/><path d="M4 33l10-9 8 7 8-11 14 11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg><span class="photo-label">Entry</span></div></div>
+    <div class="gallery-cell"><div class="photo-bg p6"><svg aria-hidden="true" class="photo-icon" width="28" height="28" viewBox="0 0 48 48" fill="none"><rect x="4" y="10" width="40" height="30" rx="2" stroke="white" stroke-width="1.5"/><circle cx="16" cy="21" r="4" stroke="white" stroke-width="1.5"/><path d="M4 33l10-9 8 7 8-11 14 11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg><span class="photo-label">Detail</span></div></div>
+    <div class="gallery-cell"><div class="photo-bg p7"><svg aria-hidden="true" class="photo-icon" width="28" height="28" viewBox="0 0 48 48" fill="none"><rect x="4" y="10" width="40" height="30" rx="2" stroke="white" stroke-width="1.5"/><circle cx="16" cy="21" r="4" stroke="white" stroke-width="1.5"/><path d="M4 33l10-9 8 7 8-11 14 11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg><span class="photo-label">Community</span></div></div>
   </div>
   <p class="gallery-note">Photography placeholders — space images added prior to launch</p>
 
@@ -800,20 +843,20 @@
       <div class="footer-brand">The Sisters' Couch Healing Hub</div>
       <div class="footer-meta">
         <span>19562 Grand River Ave · Detroit, MI 48223</span>
-        <span>[INSERT_TSC_EMAIL]</span>
+        <span>thesisterscouch@gmail.com</span>
         <span>www.thesisterscouch.com</span>
       </div>
     </div>
   </footer>
 
   <script>
-    // Nav scroll
+    // ── NAV SCROLL ──
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
       nav.classList.toggle('scrolled', window.scrollY > 50);
     }, { passive: true });
 
-    // Scroll reveal
+    // ── SCROLL REVEAL ──
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry, i) => {
         if (entry.isIntersecting) {
@@ -823,6 +866,74 @@
       });
     }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ── GOOGLE SHEETS FORM SUBMISSION ──
+    // IMPORTANT: Replace the URL below with your Google Apps Script Web App URL
+    // See setup instructions to get this URL
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbys-s-E-ng-F8l3r_MmZw-BpUBao8wsmReB4Sr4lm0MLUIhY1I1BHWmQ5bIPei5ekT_/exec';
+
+    const form = document.getElementById('inquiry-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const successMsg = document.getElementById('form-success');
+    const errorMsg = document.getElementById('form-error');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Hide any previous messages
+      successMsg.style.display = 'none';
+      errorMsg.style.display = 'none';
+
+      // Basic validation
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      // Update button state
+      submitBtn.textContent = 'Sending…';
+      submitBtn.disabled = true;
+
+      // Collect form data
+      const data = {
+        timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Detroit' }),
+        name:        document.getElementById('name').value.trim(),
+        org:         document.getElementById('org').value.trim(),
+        email:       document.getElementById('email').value.trim(),
+        phone:       document.getElementById('phone').value.trim(),
+        eventName:   document.getElementById('event-name').value.trim(),
+        date:        document.getElementById('date').value,
+        start:       document.getElementById('start').value,
+        end:         document.getElementById('end').value,
+        attendance:  document.getElementById('attendance').value,
+        layout:      document.getElementById('layout').value,
+        description: document.getElementById('description').value.trim(),
+        referral:    document.getElementById('referral').value,
+        status:      'Pending'
+      };
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors', // required for Apps Script
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        // Show success (no-cors means we can't read the response, so assume success)
+        form.reset();
+        successMsg.style.display = 'block';
+        successMsg.focus();
+        submitBtn.textContent = 'Submit Inquiry';
+        submitBtn.disabled = false;
+
+      } catch (err) {
+        errorMsg.style.display = 'block';
+        errorMsg.focus();
+        submitBtn.textContent = 'Submit Inquiry';
+        submitBtn.disabled = false;
+      }
+    });
   </script>
 </body>
 </html>
