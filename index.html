@@ -884,7 +884,26 @@
       successMsg.style.display = 'none';
       errorMsg.style.display = 'none';
 
-      // Basic validation
+      // Explicit checkbox validation with clear visual feedback
+      const ack = document.getElementById('ack');
+      const ackGroup = ack.closest('.checkbox-group');
+      if (!ack.checked) {
+        ackGroup.style.outline = '2px solid #C2847A';
+        ackGroup.style.borderRadius = '3px';
+        ackGroup.style.padding = '6px';
+        ack.focus();
+        // Remove highlight once checked
+        ack.addEventListener('change', () => {
+          ackGroup.style.outline = '';
+          ackGroup.style.padding = '';
+        }, { once: true });
+        return;
+      } else {
+        ackGroup.style.outline = '';
+        ackGroup.style.padding = '';
+      }
+
+      // Validate remaining required fields
       if (!form.checkValidity()) {
         form.reportValidity();
         return;
