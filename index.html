@@ -782,7 +782,7 @@
 
               <!-- Acknowledgment -->
               <div class="checkbox-group">
-                <input type="checkbox" id="ack" name="ack" required />
+                <input type="checkbox" id="ack" name="ack" />
                 <label for="ack">
                   I understand that submitting this form does not guarantee availability or approval.
                   A <strong>signed rental agreement</strong> and <strong>$150 security deposit</strong>
@@ -884,28 +884,38 @@
       successMsg.style.display = 'none';
       errorMsg.style.display = 'none';
 
-      // Explicit checkbox validation with clear visual feedback
+      // Validate all required fields first
+      const requiredFields = form.querySelectorAll('[required]');
+      let firstInvalid = null;
+      requiredFields.forEach(field => {
+        if (!field.checkValidity()) {
+          field.style.borderColor = '#C2847A';
+          if (!firstInvalid) firstInvalid = field;
+        } else {
+          field.style.borderColor = '';
+        }
+      });
+
+      // Explicit checkbox check with visual feedback
       const ack = document.getElementById('ack');
-      const ackGroup = ack.closest('.checkbox-group');
+      const ackLabel = ack.closest('.checkbox-group');
       if (!ack.checked) {
-        ackGroup.style.outline = '2px solid #C2847A';
-        ackGroup.style.borderRadius = '3px';
-        ackGroup.style.padding = '6px';
+        ackLabel.style.outline = '2px solid #C2847A';
+        ackLabel.style.borderRadius = '3px';
+        ackLabel.style.padding = '6px';
         ack.focus();
-        // Remove highlight once checked
         ack.addEventListener('change', () => {
-          ackGroup.style.outline = '';
-          ackGroup.style.padding = '';
+          ackLabel.style.outline = '';
+          ackLabel.style.padding = '';
         }, { once: true });
-        return;
+        if (!firstInvalid) firstInvalid = ack;
       } else {
-        ackGroup.style.outline = '';
-        ackGroup.style.padding = '';
+        ackLabel.style.outline = '';
+        ackLabel.style.padding = '';
       }
 
-      // Validate remaining required fields
-      if (!form.checkValidity()) {
-        form.reportValidity();
+      if (firstInvalid) {
+        firstInvalid.focus();
         return;
       }
 
@@ -913,9 +923,9 @@
       submitBtn.textContent = 'Sending…';
       submitBtn.disabled = true;
 
-      // Collect form data
+      // Collect all form data
       const data = {
-        timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Detroit' }),
+        timestamp:   new Date().toLocaleString('en-US', { timeZone: 'America/Detroit' }),
         name:        document.getElementById('name').value.trim(),
         org:         document.getElementById('org').value.trim(),
         email:       document.getElementById('email').value.trim(),
@@ -927,28 +937,32 @@
         attendance:  document.getElementById('attendance').value,
         layout:      document.getElementById('layout').value,
         description: document.getElementById('description').value.trim(),
-        referral:    document.getElementById('referral').value,
+        referral:    document.getElementById('referral').value || 'Not specified',
         status:      'Pending'
       };
 
       try {
+        // Send to Google Sheets via Apps Script
+        // no-cors required — response cannot be read but data posts correctly
         await fetch(SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors', // required for Apps Script
+          method:  'POST',
+          mode:    'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
+          body:    JSON.stringify(data)
         });
 
-        // Show success (no-cors means we can't read the response, so assume success)
+        // Reset form and show success
         form.reset();
+        // Re-clear any field highlights after reset
+        form.querySelectorAll('input, select, textarea').forEach(f => f.style.borderColor = '');
         successMsg.style.display = 'block';
-        successMsg.focus();
+        successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         submitBtn.textContent = 'Submit Inquiry';
         submitBtn.disabled = false;
 
       } catch (err) {
         errorMsg.style.display = 'block';
-        errorMsg.focus();
+        errorMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         submitBtn.textContent = 'Submit Inquiry';
         submitBtn.disabled = false;
       }
