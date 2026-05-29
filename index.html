@@ -437,7 +437,8 @@
     /* ── RESPONSIVE ── */
     @media (max-width: 760px) {
       .gallery { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
-      .gallery-cell:first-child { grid-row: auto; }
+      .gallery-cell { height: 180px; }
+      .gallery-cell:first-child { grid-row: auto; grid-column: 1 / -1; height: 240px; }
       .fine-print { grid-template-columns: 1fr; }
       .fp-block { border-right: none; border-bottom: 1px solid rgba(184,168,152,0.2); }
       .fp-block:last-child { border-bottom: none; }
