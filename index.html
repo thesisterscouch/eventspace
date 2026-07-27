@@ -603,6 +603,7 @@
               <li>Alcohol is strictly prohibited</li>
               <li>Furniture may not be moved by renters or guests</li>
               <li>All materials must be cleared by departure time</li>
+              <li>Events, including setup and breakdown, must fall between 8:00 AM and 8:00 PM</li>
             </ul>
           </div>
         </div>
@@ -664,13 +665,14 @@
 
                 <div class="form-group">
                   <label for="start">Setup / Start Time <span>*</span></label>
-                  <input type="time" id="start" name="start" required />
+                  <input type="time" id="start" name="start" min="08:00" max="20:00" required />
                   <span style="font-size:0.7rem;font-weight:300;color:var(--light);font-style:italic;line-height:1.4;">Please include your setup time — your booking begins at this time, not when your event starts.</span>
                 </div>
 
                 <div class="form-group">
                   <label for="end">End / Departure Time <span>*</span></label>
-                  <input type="time" id="end" name="end" required />
+                  <input type="time" id="end" name="end" min="08:00" max="20:00" required />
+                  <span style="font-size:0.7rem;font-weight:300;color:var(--light);font-style:italic;line-height:1.4;">All events, including breakdown, must conclude by 8:00 PM.</span>
                 </div>
 
                 <div class="form-group">
@@ -724,8 +726,7 @@
 
               </div>
 
-              <div class="form-submit" style="padding:1.5rem 0;">
-                <span class="submit-note">Available for rental following our July 2026 grand opening.</span>
+              <div class="form-submit" style="padding:1.5rem 0;justify-content:flex-end;">
                 <button type="submit" id="submit-btn">Submit Inquiry</button>
               </div>
 
@@ -761,6 +762,13 @@
   </footer>
 
   <script>
+    // ── PREVENT PAST-DATE BOOKINGS ──
+    const dateField = document.getElementById('date');
+    if (dateField) {
+      const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Detroit' }); // YYYY-MM-DD
+      dateField.setAttribute('min', todayStr);
+    }
+
     // ── NAV SCROLL ──
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
