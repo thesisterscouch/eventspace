@@ -542,7 +542,7 @@
         <p class="section-intro">
           Each event reservation includes exclusive use of our main gathering and lounge area,
           with the layout configured to your preference by our team before you arrive.
-          Up to 50 guests. Outside food and non-alcoholic beverages welcome.
+          Up to 40 guests. Outside food and non-alcoholic beverages welcome.
         </p>
       </div>
 
@@ -550,8 +550,8 @@
       <div class="fine-print reveal" style="transition-delay:0.1s;">
         <div class="fp-block">
           <div class="fp-label">Capacity</div>
-          <div class="fp-value">50 Guests</div>
-          <div class="fp-note">Main gathering and lounge area. Includes renter, guests, vendors, and support staff. Maximum 50 persons.</div>
+          <div class="fp-value">40 Guests</div>
+          <div class="fp-note">Main gathering and lounge area. Includes renter, guests, vendors, and support staff. Maximum 40 persons.</div>
         </div>
         <div class="fp-block">
           <div class="fp-label">Pricing</div>
@@ -677,12 +677,8 @@
 
                 <div class="form-group">
                   <label for="attendance">Expected Attendance <span>*</span></label>
-                  <select id="attendance" name="attendance" required>
-                    <option value="" disabled selected>Select a range</option>
-                    <option>1 – 15</option>
-                    <option>16 – 30</option>
-                    <option>31 – 50</option>
-                  </select>
+                  <input type="number" id="attendance" name="attendance" placeholder="Number of guests" min="1" max="40" step="1" required />
+                  <span style="font-size:0.7rem;font-weight:300;color:var(--light);font-style:italic;line-height:1.4;">Space capacity is 40 guests maximum.</span>
                 </div>
 
                 <div class="form-group">
